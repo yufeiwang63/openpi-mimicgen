@@ -1,0 +1,21 @@
+- get images from mimicgen, figure out which side view image should we use
+    should return the same images during test time
+- save (size view, wrist view, state, actions) dataset from mimicgen
+- convert to lerobot format by mimicing convert_libero_data_to_lerobot.py
+- make a new data config based on LeRobotLiberoDataConfig in config.py
+    I think there should be miminal changes
+- make a new mimicgen_policy.py based on libero_policy.py
+    I think there should also be minimal changes
+- copy a new training config which I think can be identical to libeor traing config
+- figure out how to do policy inference
+
+
+state representation in libero: 3d eef pos, 3d eef orientation (axis angle), 2d gripper pos (q value): 
+https://github.com/moojink/rlds_dataset_builder/blob/main/LIBERO_Object/LIBERO_Object_dataset_builder.py#L48
+https://github.com/openvla/openvla/blob/main/experiments/robot/libero/regenerate_libero_dataset.py#L161-L164
+
+action representation in libero: 
+I think it's 3d delta pos, 3d delta axis angle, and 1d gripper action. 
+Can download the dataset to confirm. 
+
+export HF_LEROBOT_HOME="/data/robogen/openpi/data"
