@@ -1,6 +1,7 @@
 import dataclasses
 import functools
 import logging
+import os
 import platform
 from typing import Any
 
@@ -203,7 +204,11 @@ def main(config: _config.TrainConfig):
             f"Batch size {config.batch_size} must be divisible by the number of devices {jax.device_count()}."
         )
 
-    jax.config.update("jax_compilation_cache_dir", str(epath.Path("~/.cache/jax").expanduser()))
+    # Default ~/.cache/jax; set OPENPI_JAX_CACHE_DIR to use scratch (home quotas often break training).
+    jax.config.update(
+        "jax_compilation_cache_dir",
+        os.environ.get("OPENPI_JAX_CACHE_DIR", str(epath.Path("~/.cache/jax").expanduser())),
+    )
 
     rng = jax.random.key(config.seed)
     train_rng, init_rng = jax.random.split(rng)
