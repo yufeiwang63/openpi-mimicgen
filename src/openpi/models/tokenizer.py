@@ -1,5 +1,6 @@
 import logging
 import os
+import pathlib
 
 import jax
 import numpy as np
@@ -11,11 +12,24 @@ import openpi.models.utils.fsq_tokenizer as fsq_tokenizer
 import openpi.shared.download as download
 
 
+# If set, use this file instead of downloading from GCS (avoids SSL issues on locked-down clusters).
+_PALIGEMMA_TOKENIZER_PATH_ENV = "OPENPI_PALIGEMMA_TOKENIZER_PATH"
+
+
 class PaligemmaTokenizer:
     def __init__(self, max_len: int = 48):
         self._max_len = max_len
 
-        path = download.maybe_download("gs://big_vision/paligemma_tokenizer.model", gs={"token": "anon"})
+        if override := os.environ.get(_PALIGEMMA_TOKENIZER_PATH_ENV):
+            path = pathlib.Path(override).expanduser().resolve()
+            if not path.is_file():
+                raise FileNotFoundError(
+                    f"{_PALIGEMMA_TOKENIZER_PATH_ENV}={override!r} is not a file. "
+                    "Download paligemma_tokenizer.model from gs://big_vision/ on a machine with working SSL, "
+                    "then copy it here or place it under ~/.cache/openpi/big_vision/paligemma_tokenizer.model"
+                )
+        else:
+            path = download.maybe_download("gs://big_vision/paligemma_tokenizer.model", gs={"token": "anon"})
         with path.open("rb") as f:
             self._tokenizer = sentencepiece.SentencePieceProcessor(model_proto=f.read())
 
