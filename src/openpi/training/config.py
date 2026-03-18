@@ -609,6 +609,9 @@ class TrainConfig:
 
     # If true, will enable wandb logging.
     wandb_enabled: bool = True
+    # If true, log camera mosaic from the first batch (step 0). Off by default: indexing sharded arrays
+    # triggers NCCL and often fails on single-GPU jobs or broken IB multi-GPU setups.
+    wandb_log_first_batch_images: bool = False
 
     # Used to pass metadata to the policy server.
     policy_metadata: dict[str, Any] | None = None
