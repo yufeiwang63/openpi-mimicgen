@@ -19,3 +19,16 @@ I think it's 3d delta pos, 3d delta axis angle, and 1d gripper action.
 Can download the dataset to confirm. 
 
 export HF_LEROBOT_HOME="/data/robogen/openpi/data"
+
+export HF_HOME=/project_data/held/yufeiw2/openpi_mimicgen/data/cache/huggingface
+# optional but explicit:
+export HF_DATASETS_CACHE=$HF_HOME/datasets
+export OPENPI_DATA_HOME=/project_data/held/yufeiw2/openpi-mimicgen/data/cache/openpi/
+export OPENPI_JAX_CACHE_DIR=/project_data/held/yufeiw2/openpi_mimicgen/data/cache/jax
+
+python scripts/train.py pi05_mimicgen_lora \
+  --exp_name lora_from_my_ckpt \
+  --load_checkpoint_path ./checkpoints/pi05_mimicgen/my_exp/10000/params
+
+
+uv run scripts/serve_policy.py policy:checkpoint --policy.config=pi05_mimicgen_lora --policy.dir=checkpoints/pi05_mimicgen_lora/first_lora_squared2/30000

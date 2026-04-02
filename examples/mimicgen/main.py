@@ -59,6 +59,24 @@ MAX_STEPS_BY_TASK = {
     "square": 400,
 }
 
+def _patch_headless_opencv_teardown() -> None:
+    """Robosuite's OpenCVRenderer.close() calls cv2.destroyAllWindows(); headless OpenCV raises.
+
+    Enable when using env.hard_reset (viewer destroyed each reset) on servers without GTK/Qt OpenCV.
+    """
+    import cv2
+
+    _orig = cv2.destroyAllWindows
+
+    def _safe_destroy_all_windows() -> None:
+        try:
+            _orig()
+        except cv2.error:
+            pass
+
+    cv2.destroyAllWindows = _safe_destroy_all_windows
+
+
 task_name_to_lang_description = {
     'stack_d1': 'Stack the blocks on top of each other',
     'stack_three_d1': 'Stack the three blocks on top of each other',
@@ -172,7 +190,12 @@ def _create_mimicgen_env(
         is_eval=True,
         postprocess_visual_obs=postprocess_visual_obs,
     )
-    robomimic_env.env.hard_reset = False
+    
+    
+    # Extract task name from dataset_path (e.g., "square_d2" from ".../square_d2.hdf5")
+    task_name = dataset_path.split("/")[-1].split(".")[0]
+    robomimic_env.env.hard_reset = True if task_name in ["square_d2"] else False
+    # robomimic_env.env.hard_reset = False 
 
     # Order: MultiStepWrapper(VideoRecordingWrapper(RobomimicImageWrapper(...)))
     # so that each step records one frame from the inner render (agentview).
@@ -226,6 +249,7 @@ class Args:
 
 def eval_mimicgen(args: Args) -> None:
     # np.random.seed(args.seed)
+    _patch_headless_opencv_teardown()
     pathlib.Path(args.video_out_path).mkdir(parents=True, exist_ok=True)
 
     task_name = pathlib.Path(args.dataset_path).stem
