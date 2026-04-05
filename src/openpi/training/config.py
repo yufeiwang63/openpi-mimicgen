@@ -996,7 +996,8 @@ _CONFIGS = [
             action_expert_variant="gemma_300m_lora",
         ),
         data=AlohaOursDataConfig(
-            repo_id="folding_onesie_pi_lerobot",
+            # repo_id="folding_onesie_pi_lerobot", # for axis angle
+            repo_id="folding_onesie_6d_orientation", # for 6d orientation
             base_config=DataConfig(prompt_from_task=True),
             extra_delta_transform=False,
         ),

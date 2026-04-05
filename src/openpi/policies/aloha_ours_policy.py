@@ -101,4 +101,5 @@ class AlohaOursOutputs(transforms.DataTransformFn):
         # dimension, we need to now parse out the correct number of actions in the return dict.
         # For Libero, we only return the first 7 actions (since the rest is padding).
         # For your own dataset, replace `7` with the action dimension of your dataset.
-        return {"actions": np.asarray(data["actions"][:, :7])}
+        # return {"actions": np.asarray(data["actions"][:, :7])} ### for axis angle
+        return {"actions": np.asarray(data["actions"][:, :10])} ### for 6d orientation
