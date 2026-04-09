@@ -997,7 +997,8 @@ _CONFIGS = [
         ),
         data=AlohaOursDataConfig(
             # repo_id="folding_onesie_pi_lerobot", # for axis angle
-            repo_id="folding_onesie_6d_orientation", # for 6d orientation
+            # repo_id="folding_onesie_6d_orientation", # for 6d orientation
+            repo_id="folding_onesie_joint", # for 6d orientation
             base_config=DataConfig(prompt_from_task=True),
             extra_delta_transform=False,
         ),
@@ -1010,7 +1011,8 @@ _CONFIGS = [
         ),
         optimizer=_optimizer.AdamW(clip_gradient_norm=1.0),
         weight_loader=weight_loaders.CheckpointWeightLoader("gs://openpi-assets/checkpoints/pi05_base/params"),
-        num_train_steps=30_000,
+        # num_train_steps=30_000,
+        num_train_steps=80_000,
         freeze_filter=pi0_config.Pi0Config(
             pi05=True,
             action_horizon=10,
