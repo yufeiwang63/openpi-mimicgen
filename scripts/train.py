@@ -3,6 +3,7 @@ import functools
 import logging
 import os
 import platform
+import subprocess
 from typing import Any
 
 import etils.epath as epath
@@ -27,6 +28,24 @@ import openpi.training.optimizer as _optimizer
 import openpi.training.sharding as sharding
 import openpi.training.utils as training_utils
 import openpi.training.weight_loaders as _weight_loaders
+
+
+def upload_file(local_folder: str) -> None:
+    base = "gs://cmu-gpucloud-yufeiw2/openpi_exps"
+    folder_name = os.path.basename(local_folder.rstrip("/"))
+    destination = f"{base}/{folder_name}"
+
+    try:
+        cmd = ["gcloud", "storage", "rsync", "-r", local_folder, destination]
+        subprocess.run(
+            cmd,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        print(f"[Success] Uploaded: {local_folder} -> {destination}")
+    except subprocess.CalledProcessError as e:
+        print(f"[Failure] Failed to upload {local_folder}: {e.stderr.strip()}")
 
 
 def init_logging():
@@ -281,6 +300,9 @@ def main(config: _config.TrainConfig):
 
         if (step % config.save_interval == 0 and step > start_step) or step == config.num_train_steps - 1:
             _checkpoints.save_state(checkpoint_manager, train_state, data_loader, step)
+            checkpoint_manager.wait_until_finished()
+            if jax.process_index() == 0:
+                upload_file(str(config.checkpoint_dir))
 
     logging.info("Waiting for checkpoint manager to finish")
     checkpoint_manager.wait_until_finished()

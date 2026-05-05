@@ -933,11 +933,16 @@ _CONFIGS = [
         name="pi05_mimicgen",
         model=pi0_config.Pi0Config(pi05=True, action_horizon=10, discrete_state_input=False),
         data=MimicGenDataConfig(
-            repo_id="mimicgen/square_d2",
+            # repo_id="square_d2",
+            # repo_id="threading_d2",
+            # repo_id="three_piece_assembly_d2",
+            # repo_id="stack_three_d1",
+            repo_id="three_piece_assembly_d2_1000_demo",
+            # repo_id="mimicgen/square_d2",
             base_config=DataConfig(prompt_from_task=True),
             extra_delta_transform=False,
         ),
-        batch_size=256,
+        batch_size=32,
         lr_schedule=_optimizer.CosineDecaySchedule(
             warmup_steps=10_000,
             peak_lr=5e-5,
@@ -948,7 +953,7 @@ _CONFIGS = [
         ema_decay=0.999,
         weight_loader=weight_loaders.CheckpointWeightLoader("gs://openpi-assets/checkpoints/pi05_base/params"),
         pytorch_weight_path="/path/to/your/pytorch_weight_path",
-        num_train_steps=30_000,
+        num_train_steps=200_000,
     ),
     TrainConfig(
         name="pi05_mimicgen_lora",
@@ -961,7 +966,11 @@ _CONFIGS = [
             action_expert_variant="gemma_300m_lora",
         ),
         data=MimicGenDataConfig(
-            repo_id="mimicgen/square_d2",
+            repo_id="square_d2",
+            # repo_id="threading_d2",
+            # repo_id="three_piece_assembly_d2",
+            # repo_id="stack_three_d1",
+            # repo_id="three_piece_assembly_d2_1000_demo",
             base_config=DataConfig(prompt_from_task=True),
             extra_delta_transform=False,
         ),
@@ -974,7 +983,7 @@ _CONFIGS = [
         ),
         optimizer=_optimizer.AdamW(clip_gradient_norm=1.0),
         weight_loader=weight_loaders.CheckpointWeightLoader("gs://openpi-assets/checkpoints/pi05_base/params"),
-        num_train_steps=30_000,
+        num_train_steps=200_000,
         freeze_filter=pi0_config.Pi0Config(
             pi05=True,
             action_horizon=10,
@@ -1012,7 +1021,7 @@ _CONFIGS = [
         optimizer=_optimizer.AdamW(clip_gradient_norm=1.0),
         weight_loader=weight_loaders.CheckpointWeightLoader("gs://openpi-assets/checkpoints/pi05_base/params"),
         # num_train_steps=30_000,
-        num_train_steps=80_000,
+        num_train_steps=1000_000,
         freeze_filter=pi0_config.Pi0Config(
             pi05=True,
             action_horizon=10,
