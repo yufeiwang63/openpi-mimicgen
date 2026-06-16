@@ -18,7 +18,7 @@ action representation in libero:
 I think it's 3d delta pos, 3d delta axis angle, and 1d gripper action. 
 Can download the dataset to confirm. 
 
-export HF_LEROBOT_HOME="/data/robogen/openpi/data"
+export HF_LEROBOT_HOME="/ocean/projects/cis240052p/ywang59/openpi-mimicgen/data"
 
 export HF_HOME=/project_data/held/yufeiw2/openpi_mimicgen/data/cache/huggingface
 # optional but explicit:

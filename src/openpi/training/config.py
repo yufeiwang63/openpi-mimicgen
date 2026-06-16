@@ -938,8 +938,10 @@ _CONFIGS = [
             # repo_id="three_piece_assembly_d2",
             # repo_id="stack_three_d1",
             # repo_id="three_piece_assembly_d2_1000_demo",
-            repo_id="coffee_d2",
+            # repo_id="coffee_d2",
             # repo_id="mimicgen/square_d2",
+            # repo_id='hammer_cleanup_d1',
+            repo_id='kitchen_d1',
             base_config=DataConfig(prompt_from_task=True),
             extra_delta_transform=False,
         ),
@@ -970,9 +972,12 @@ _CONFIGS = [
             # repo_id="square_d2",
             # repo_id="threading_d2",
             # repo_id="three_piece_assembly_d2",
-            repo_id="coffee_d2",
+            # repo_id="coffee_d2",
             # repo_id="stack_three_d1",
             # repo_id="three_piece_assembly_d2_1000_demo",
+            # repo_id='hammer_cleanup_d1',
+            # repo_id='kitchen_d1',
+            repo_id='pap_three_joint',
             base_config=DataConfig(prompt_from_task=True),
             extra_delta_transform=False,
         ),
@@ -985,7 +990,7 @@ _CONFIGS = [
         ),
         optimizer=_optimizer.AdamW(clip_gradient_norm=1.0),
         weight_loader=weight_loaders.CheckpointWeightLoader("gs://openpi-assets/checkpoints/pi05_base/params"),
-        num_train_steps=200_000,
+        num_train_steps=60_000,
         freeze_filter=pi0_config.Pi0Config(
             pi05=True,
             action_horizon=10,
@@ -1009,7 +1014,9 @@ _CONFIGS = [
         data=AlohaOursDataConfig(
             # repo_id="folding_onesie_pi_lerobot", # for axis angle
             # repo_id="folding_onesie_6d_orientation", # for 6d orientation
-            repo_id="folding_onesie_joint", # for 6d orientation
+            # repo_id="folding_onesie_joint", # for 6d orientation
+            repo_id="aloha_lego", # for 6d orientation
+            # repo_id="pap_three_joint", # for 6d orientation
             base_config=DataConfig(prompt_from_task=True),
             extra_delta_transform=False,
         ),

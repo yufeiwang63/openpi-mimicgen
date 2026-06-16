@@ -1,5 +1,5 @@
-path=/tmp
-# path="${PWD}"
+# path=/tmp
+path="${PWD}"
 export HF_LEROBOT_HOME="${path}/data"
 export HF_HOME="${path}/data/cache/huggingface"
 export HF_DATASETS_CACHE=$HF_HOME/datasets

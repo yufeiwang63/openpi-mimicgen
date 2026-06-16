@@ -51,6 +51,8 @@ GIT_LFS_SKIP_SMUDGE=1 uv pip install -e .
 
 NOTE: `GIT_LFS_SKIP_SMUDGE=1` is needed to pull LeRobot as a dependency.
 
+On clusters with a small home quota, uv’s default cache under `~/.cache/uv` can fill disk while downloading large wheels (for example PyTorch). Source [`scripts/uv_hpc_env.sh`](scripts/uv_hpc_env.sh) before `uv sync` to set `UV_CACHE_DIR` (typically under `$SCRATCH`) and `UV_LINK_MODE=copy` when the cache and `.venv` are on different filesystems. See comments in that script for optionally setting `UV_PROJECT_ENVIRONMENT` to place the venv on scratch as well.
+
 **Docker**: As an alternative to uv installation, we provide instructions for installing openpi using Docker. If you encounter issues with your system setup, consider using Docker to simplify installation. See [Docker Setup](docs/docker.md) for more details.
 
 
@@ -313,6 +315,7 @@ We will collect common issues and their solutions here. If you encounter an issu
 | Issue                                     | Resolution                                                                                                                                                                                   |
 | ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `uv sync` fails with dependency conflicts | Try removing the virtual environment directory (`rm -rf .venv`) and running `uv sync` again. If issues persist, check that you have the latest version of `uv` installed (`uv self update`). |
+| `uv sync` / wheel extract fails with disk quota | Point the cache (and optionally the venv) at a larger filesystem: `source scripts/uv_hpc_env.sh` then run `uv sync`, or set `UV_CACHE_DIR` yourself. If extraction still fails, free space under the cache path or move `UV_PROJECT_ENVIRONMENT` to scratch (see `scripts/uv_hpc_env.sh`). |
 | Training runs out of GPU memory           | Make sure you set `XLA_PYTHON_CLIENT_MEM_FRACTION=0.9` (or higher) before running training to allow JAX to use more GPU memory. You can also use `--fsdp-devices <n>` where `<n>` is your number of GPUs, to enable [fully-sharded data parallelism](https://engineering.fb.com/2021/07/15/open-source/fsdp/), which reduces memory usage in exchange for slower training (the amount of slowdown depends on your particular setup). If you are still running out of memory, you may want to consider disabling EMA.        |
 | Policy server connection errors           | Check that the server is running and listening on the expected port. Verify network connectivity and firewall settings between client and server.                                            |
 | Missing norm stats error when training    | Run `scripts/compute_norm_stats.py` with your config name before starting training.                                                                                                          |
